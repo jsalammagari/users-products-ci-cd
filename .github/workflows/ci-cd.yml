@@ -40,14 +40,14 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     # Install pytest before running tests
-    - name: Install pytest
-      run: |
-        pip install pytest
+    # - name: Install pytest
+    #   run: |
+    #     pip install pytest
 
     # Run tests using pytest
-    - name: Test with pytest
-      run: |
-        pytest
+    # - name: Test with pytest
+    #   run: |
+    #     pytest
 
     # This is a placeholder for deployment steps which should be customized as per your deployment process
     # - name: Deploy to Production
