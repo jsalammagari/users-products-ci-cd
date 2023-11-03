@@ -1,47 +1,52 @@
-# This is the name of your workflow, it can be anything
-name: Python-Flask application CI/CD pipeline
+# Name of the workflow
+name: Python Flask application CI/CD pipeline
 
-# This specifies when the workflow should run. 'push' means it will run on every push to any branch.
-# 'pull_request' means it will run on pull requests to any branch.
+# Trigger the workflow on push or pull request to any branch
 on: [push, pull_request]
 
-# This section defines the jobs that will run as part of your workflow
+# Define jobs
 jobs:
-  # This is the first job, called 'build-and-test'
   build-and-test:
-    # Specifies that the job should run on the latest version of Ubuntu
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # These are the steps that will be run as part of this job
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    # Checks-out your repository under $GITHUB_WORKSPACE so your job can access it
     - uses: actions/checkout@v2
 
-    # Sets up a Python environment with version 3.8
-    - name: Set up Python 3.8
+    # Sets up a Python environment using the specified version
+    - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
 
-    # Installs the dependencies from the requirements.txt file
+    # Install Python dependencies from the requirements.txt file if it exists
+    # If the requirements file is not found, the command will not cause the workflow to fail
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r monolithic/requirements.txt
+        if [ -f requirements.txt ]; then pip install -r monolithic/requirements.txt; fi
 
-    # Runs linting using flake8 to check for Python syntax errors or undefined names
+    # Install flake8 for the linting step below
+    - name: Install flake8
+      run: |
+        pip install flake8
+
+    # Run flake8 for linting, checking for Python syntax errors or undefined names
     - name: Lint with flake8
       run: |
+        # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    # Runs tests using pytest
+    # Run tests using pytest
     - name: Test with pytest
       run: |
         pytest
 
-    # If tests pass, this section could be used to deploy the application to a server
-    # This part is commented out because it needs to be customized based on your deployment needs
+    # This is a placeholder for deployment steps which should be customized as per your deployment process
     # - name: Deploy to Production
     #   run: <deployment command>
     #   env:
